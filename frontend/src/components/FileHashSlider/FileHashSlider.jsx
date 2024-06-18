@@ -20,7 +20,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 
-import ProcessingImage from "../../resources/processing2.gif";
+import ProcessingImage from "../../resources/processing.gif";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 14,
@@ -34,7 +34,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const steps = ["Select the File", "Select Hashing Method", "Let's Calculate"];
+const steps = ["Select the File", "Select Hashing Method", "Calculate the Hash"];
 
 const BpIcon = styled("span")(({ theme }) => ({
   borderRadius: "50%",
@@ -188,24 +188,23 @@ export default function FileHashSlider() {
     setHasingProgress(0);
     setProcessSate(1);
     if (file) {
-      const chunkSize = 1024 * 1024 * 20; // 20 MB chunks
+      const chunkSize = 1024 * 1024 * 2; // 20 MB chunks
       const totalChunks = Math.ceil(file.size / chunkSize);
       let currentChunk = 0;
       let hash;
-      if (hashFunc === "MD5"){
+      if (hashFunc === "MD5") {
         hash = CryptoJS.algo.MD5.create();
-      }else if(hashFunc === "SHA256"){
+      } else if (hashFunc === "SHA256") {
         hash = CryptoJS.algo.SHA256.create();
-      }else if(hashFunc === "SHA224"){
+      } else if (hashFunc === "SHA224") {
         hash = CryptoJS.algo.SHA224.create();
-      }else if(hashFunc === "SHA512"){
+      } else if (hashFunc === "SHA512") {
         hash = CryptoJS.algo.SHA512.create();
-      }else if(hashFunc === "SHA384"){
+      } else if (hashFunc === "SHA384") {
         hash = CryptoJS.algo.SHA384.create();
-      }else if(hashFunc === "SHA3"){
+      } else if (hashFunc === "SHA3") {
         hash = CryptoJS.algo.SHA3.create();
       }
-     
 
       const reader = new FileReader();
 
@@ -304,7 +303,7 @@ export default function FileHashSlider() {
           sx={{
             mt: 2,
             width: "100%",
-            height: "50vh",
+            height: "40vh",
             border: "1px solid",
             borderRadius: "5px",
             display: "flex",
@@ -326,7 +325,7 @@ export default function FileHashSlider() {
               <Box
                 {...getRootProps()}
                 sx={{
-                  width: "70%",
+                  width: "80%",
                   height: "70%",
                   display: "flex",
                   flexDirection: "column",
@@ -408,16 +407,27 @@ export default function FileHashSlider() {
                       control={<BpRadio />}
                       label="MD5"
                     />
-                   
+
+                    <FormControlLabel
+                      value="SHA224"
+                      control={<BpRadio />}
+                      label="SHA-224"
+                    />
                     <FormControlLabel
                       value={"SHA256"}
                       control={<BpRadio />}
-                      label="SHA256"
+                      label="SHA-256"
+                    />
+
+                    <FormControlLabel
+                      value="SHA384"
+                      control={<BpRadio />}
+                      label="SHA-384"
                     />
                     <FormControlLabel
                       value={"SHA512"}
                       control={<BpRadio />}
-                      label="SHA512"
+                      label="SHA-512"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -455,13 +465,14 @@ export default function FileHashSlider() {
                 {processState == 1 && (
                   <>
                     <div>
-                      <Typography variant="h4">Calculating</Typography>
+                      <Typography variant="h4">Calculating ...</Typography>
                     </div>
+
                     <img
                       src={ProcessingImage}
                       alt="Processing"
-                      width="150"
-                      height="150"
+                      width="260"
+                      height="100"
                     />
 
                     <div style={{ width: "60%", mt: 10 }}>
@@ -476,11 +487,22 @@ export default function FileHashSlider() {
                       flexDirection: "column",
                       justifyContent: "center",
                       alignItems: "center",
-                      width:"100%"
+                      width: "100%",
                     }}
                   >
-                    <Typography sx={{mt:3,mb:1, fontSize:"20px"}}>{hashFunc} File Hash:</Typography>
-                    <Typography variant="h6" sx={{fontWeight:"bold",maxWidth:"90%", overflowX:"auto", }}>{hash}</Typography>
+                    <Typography sx={{ mt: 3, mb: 1, fontSize: "20px" }}>
+                      {hashFunc} Hash of the Text:
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: "bold",
+                        maxWidth: "90%",
+                        overflowX: "auto",
+                      }}
+                    >
+                      {hash}
+                    </Typography>
                   </Box>
                 )}
               </Box>
