@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -15,10 +16,25 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import CryptoJS from "crypto-js";
 import "react-toastify/dist/ReactToastify.css";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
 
-import ProcessingImage from "../../resources/processing2.gif";
+import ProcessingImage from "../../resources/processing.gif";
 
-const steps = ["Select the File", "Select Hashing Method", "Let's Calculate"];
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 14,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: "#E8E8E8",
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: "#00245A",
+  },
+}));
+
+const steps = ["Select the File", "Select Hashing Method", "Calculate the Hash"];
 
 const BpIcon = styled("span")(({ theme }) => ({
   borderRadius: "50%",
@@ -83,16 +99,31 @@ export default function FileHashSlider() {
   const [skipped, setSkipped] = useState(new Set());
   const [file, setFile] = useState(null);
   const [hash, setHash] = useState("");
-  const [hashFunc, setHashFunc] = useState(0);
+  const [hashFunc, setHashFunc] = useState("MD5");
   const [hasingProgress, setHasingProgress] = useState(0);
   const [fileName, setFileName] = useState(null);
+  const [processState, setProcessSate] = useState(0);
+
+  useEffect(() => {
+    const unloadCallback = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    };
+
+    window.addEventListener("beforeunload", unloadCallback);
+    return () => window.removeEventListener("beforeunload", unloadCallback);
+  }, []);
 
   const handleChange = (event) => {
+    setProcessSate(0);
+    setHasingProgress(0);
     setHashFunc(event.target.value);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length) {
+      setProcessSate(0);
       const file = acceptedFiles[0];
       setFile(file);
       setFileName(file.name);
@@ -154,11 +185,26 @@ export default function FileHashSlider() {
 
   // calculate hash
   const calculateHash = () => {
+    setHasingProgress(0);
+    setProcessSate(1);
     if (file) {
-      const chunkSize = 1024 * 1024 * 20; // 20 MB chunks
+      const chunkSize = 1024 * 1024 * 2; // 20 MB chunks
       const totalChunks = Math.ceil(file.size / chunkSize);
       let currentChunk = 0;
-      let hash = CryptoJS.algo.MD5.create();
+      let hash;
+      if (hashFunc === "MD5") {
+        hash = CryptoJS.algo.MD5.create();
+      } else if (hashFunc === "SHA256") {
+        hash = CryptoJS.algo.SHA256.create();
+      } else if (hashFunc === "SHA224") {
+        hash = CryptoJS.algo.SHA224.create();
+      } else if (hashFunc === "SHA512") {
+        hash = CryptoJS.algo.SHA512.create();
+      } else if (hashFunc === "SHA384") {
+        hash = CryptoJS.algo.SHA384.create();
+      } else if (hashFunc === "SHA3") {
+        hash = CryptoJS.algo.SHA3.create();
+      }
 
       const reader = new FileReader();
 
@@ -171,10 +217,12 @@ export default function FileHashSlider() {
         setHasingProgress(currentProgress);
 
         if (currentChunk < totalChunks) {
+          console.log(1);
           processNextChunk();
         } else {
           const finalHash = hash.finalize();
           setHash(finalHash.toString());
+          setProcessSate(2);
         }
       };
 
@@ -188,7 +236,33 @@ export default function FileHashSlider() {
       processNextChunk();
     }
   };
+  function LinearProgressWithLabel(props) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ width: "100%", mr: 1 }}>
+          <BorderLinearProgress variant="determinate" {...props} />
+        </Box>
+        <Box sx={{ minWidth: 35, ml: 1 }}>
+          <Typography variant="h6" color="text.secondary">{`${Math.round(
+            props.value
+          )}%`}</Typography>
+        </Box>
+      </Box>
+    );
+  }
 
+  LinearProgressWithLabel.propTypes = {
+    /**
+     * The value of the progress indicator for the determinate and buffer variants.
+     * Value between 0 and 100.
+     */
+    value: PropTypes.number.isRequired,
+  };
   return (
     <Box sx={{ width: "100%" }}>
       <ToastContainer
@@ -229,7 +303,7 @@ export default function FileHashSlider() {
           sx={{
             mt: 2,
             width: "100%",
-            height: "50vh",
+            height: "40vh",
             border: "1px solid",
             borderRadius: "5px",
             display: "flex",
@@ -251,7 +325,7 @@ export default function FileHashSlider() {
               <Box
                 {...getRootProps()}
                 sx={{
-                  width: "70%",
+                  width: "80%",
                   height: "70%",
                   display: "flex",
                   flexDirection: "column",
@@ -267,11 +341,34 @@ export default function FileHashSlider() {
               >
                 <input {...getInputProps()} />
                 <UploadFileIcon sx={{ fontSize: "50px" }} />
-                <Typography sx={{ mt: 2 }}>
-                  {fileName
-                    ? `Selected File: ${fileName}`
-                    : "Drag and drop or Click to Select the File"}
-                </Typography>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "Flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  {fileName ? (
+                    <Box
+                      sx={{
+                        mt: 2,
+                        display: "Flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography>Selected File:</Typography>
+                      <Typography>{fileName}</Typography>
+                    </Box>
+                  ) : (
+                    // `Selected File: ${fileName}`
+                    <Typography>
+                      Drag and drop or Click to Select the File
+                    </Typography>
+                  )}
+                </Box>
               </Box>
             </Box>
           )}
@@ -299,36 +396,38 @@ export default function FileHashSlider() {
                 <FormControl>
                   {/* <FormLabel id="demo-customized-radios">Hashing Functions</FormLabel> */}
                   <RadioGroup
-                    defaultValue={0}
+                    defaultValue={"MD5"}
                     value={hashFunc}
                     onChange={handleChange}
                     aria-labelledby="demo-customized-radios"
                     name="customized-radios"
                   >
                     <FormControlLabel
-                      value={0}
+                      value={"MD5"}
                       control={<BpRadio />}
                       label="MD5"
                     />
+
                     <FormControlLabel
-                      value={1}
+                      value="SHA224"
                       control={<BpRadio />}
-                      label="SHA1"
+                      label="SHA-224"
                     />
                     <FormControlLabel
-                      value={2}
+                      value={"SHA256"}
                       control={<BpRadio />}
-                      label="SHA3"
+                      label="SHA-256"
+                    />
+
+                    <FormControlLabel
+                      value="SHA384"
+                      control={<BpRadio />}
+                      label="SHA-384"
                     />
                     <FormControlLabel
-                      value={3}
+                      value={"SHA512"}
                       control={<BpRadio />}
-                      label="SHA256"
-                    />
-                    <FormControlLabel
-                      value={4}
-                      control={<BpRadio />}
-                      label="SHA512"
+                      label="SHA-512"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -357,12 +456,55 @@ export default function FileHashSlider() {
                   flexDirection: "column",
                 }}
               >
-                <img src={ProcessingImage} alt="Processing" width="200" height="200" />
-                <Button variant="contained" onClick={calculateHash}>
-                  Lets Hash It
-                </Button>
-                <p>{hasingProgress} %</p>
-                <p>{hash}</p>
+                {(processState == 0 || processState == 2) && (
+                  <Button variant="contained" onClick={calculateHash}>
+                    Lets Hash It
+                  </Button>
+                )}
+
+                {processState == 1 && (
+                  <>
+                    <div>
+                      <Typography variant="h4">Calculating ...</Typography>
+                    </div>
+
+                    <img
+                      src={ProcessingImage}
+                      alt="Processing"
+                      width="260"
+                      height="100"
+                    />
+
+                    <div style={{ width: "60%", mt: 10 }}>
+                      <LinearProgressWithLabel value={hasingProgress} />
+                    </div>
+                  </>
+                )}
+                {processState == 2 && (
+                  <Box
+                    sx={{
+                      display: "Flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Typography sx={{ mt: 3, mb: 1, fontSize: "20px" }}>
+                      {hashFunc} Hash of the Text:
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: "bold",
+                        maxWidth: "90%",
+                        overflowX: "auto",
+                      }}
+                    >
+                      {hash}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
           )}
