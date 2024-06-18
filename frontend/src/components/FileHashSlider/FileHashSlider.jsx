@@ -123,6 +123,7 @@ export default function FileHashSlider() {
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length) {
+      setProcessSate(0);
       const file = acceptedFiles[0];
       setFile(file);
       setFileName(file.name);
