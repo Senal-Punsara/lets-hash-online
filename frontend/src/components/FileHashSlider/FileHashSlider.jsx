@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -99,7 +99,7 @@ export default function FileHashSlider() {
   const [skipped, setSkipped] = useState(new Set());
   const [file, setFile] = useState(null);
   const [hash, setHash] = useState("");
-  const [hashFunc, setHashFunc] = useState(0);
+  const [hashFunc, setHashFunc] = useState("MD5");
   const [hasingProgress, setHasingProgress] = useState(0);
   const [fileName, setFileName] = useState(null);
   const [processState, setProcessSate] = useState(0);
@@ -110,12 +110,14 @@ export default function FileHashSlider() {
       event.returnValue = "";
       return "";
     };
-  
+
     window.addEventListener("beforeunload", unloadCallback);
     return () => window.removeEventListener("beforeunload", unloadCallback);
   }, []);
 
   const handleChange = (event) => {
+    setProcessSate(0);
+    setHasingProgress(0);
     setHashFunc(event.target.value);
   };
 
@@ -182,12 +184,27 @@ export default function FileHashSlider() {
 
   // calculate hash
   const calculateHash = () => {
+    setHasingProgress(0);
     setProcessSate(1);
     if (file) {
       const chunkSize = 1024 * 1024 * 20; // 20 MB chunks
       const totalChunks = Math.ceil(file.size / chunkSize);
       let currentChunk = 0;
-      let hash = CryptoJS.algo.MD5.create();
+      let hash;
+      if (hashFunc === "MD5"){
+        hash = CryptoJS.algo.MD5.create();
+      }else if(hashFunc === "SHA256"){
+        hash = CryptoJS.algo.SHA256.create();
+      }else if(hashFunc === "SHA224"){
+        hash = CryptoJS.algo.SHA224.create();
+      }else if(hashFunc === "SHA512"){
+        hash = CryptoJS.algo.SHA512.create();
+      }else if(hashFunc === "SHA384"){
+        hash = CryptoJS.algo.SHA384.create();
+      }else if(hashFunc === "SHA3"){
+        hash = CryptoJS.algo.SHA3.create();
+      }
+     
 
       const reader = new FileReader();
 
@@ -324,10 +341,25 @@ export default function FileHashSlider() {
               >
                 <input {...getInputProps()} />
                 <UploadFileIcon sx={{ fontSize: "50px" }} />
-                <Box sx={{ mt: 2, display:"Flex", flexDirection:"column", justifyContent:"center" }}>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "Flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
                   {fileName ? (
-                    <Box sx={{ mt: 2, display:"Flex", flexDirection:"column", justifyContent:"center", alignItems:"center" }}>
-                      <Typography >Selected File:</Typography>
+                    <Box
+                      sx={{
+                        mt: 2,
+                        display: "Flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography>Selected File:</Typography>
                       <Typography>{fileName}</Typography>
                     </Box>
                   ) : (
@@ -364,34 +396,25 @@ export default function FileHashSlider() {
                 <FormControl>
                   {/* <FormLabel id="demo-customized-radios">Hashing Functions</FormLabel> */}
                   <RadioGroup
-                    defaultValue={0}
+                    defaultValue={"MD5"}
                     value={hashFunc}
                     onChange={handleChange}
                     aria-labelledby="demo-customized-radios"
                     name="customized-radios"
                   >
                     <FormControlLabel
-                      value={0}
+                      value={"MD5"}
                       control={<BpRadio />}
                       label="MD5"
                     />
+                   
                     <FormControlLabel
-                      value={1}
-                      control={<BpRadio />}
-                      label="SHA1"
-                    />
-                    <FormControlLabel
-                      value={2}
-                      control={<BpRadio />}
-                      label="SHA3"
-                    />
-                    <FormControlLabel
-                      value={3}
+                      value={"SHA256"}
                       control={<BpRadio />}
                       label="SHA256"
                     />
                     <FormControlLabel
-                      value={4}
+                      value={"SHA512"}
                       control={<BpRadio />}
                       label="SHA512"
                     />
@@ -430,11 +453,14 @@ export default function FileHashSlider() {
 
                 {processState == 1 && (
                   <>
+                    <div>
+                      <Typography variant="h4">Calculating</Typography>
+                    </div>
                     <img
                       src={ProcessingImage}
                       alt="Processing"
-                      width="200"
-                      height="200"
+                      width="150"
+                      height="150"
                     />
 
                     <div style={{ width: "60%", mt: 10 }}>
@@ -442,7 +468,20 @@ export default function FileHashSlider() {
                     </div>
                   </>
                 )}
-                {processState == 2 && <p>{hash}</p>}
+                {processState == 2 && (
+                  <Box
+                    sx={{
+                      display: "Flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width:"100%"
+                    }}
+                  >
+                    <Typography sx={{mt:3,mb:1, fontSize:"20px"}}>{hashFunc} File Hash:</Typography>
+                    <Typography variant="h6" sx={{fontWeight:"bold",maxWidth:"90%", overflowX:"auto", }}>{hash}</Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
           )}
