@@ -1,7 +1,6 @@
 # LET'S HASH ONLINE
 <div align="center" style="display: flex, flex-direction: row;">
   <img src="https://github.com/Senal-Punsara/lets-hash-online/blob/main/frontend/src/resources/logo.png" alt="logo" width="200" height="200">
-  <h3>LET'S HASH ONLINE</h3>
 </div>
 
 
