@@ -1,6 +1,7 @@
 # LET'S HASH ONLINE
-<div align="center">
+<div align="center" style="display: flex, flex-direction: row;">
   <img src="https://github.com/Senal-Punsara/lets-hash-online/blob/main/frontend/src/resources/logo.png" alt="logo" width="200" height="200">
+  <h3>LET'S HASH ONLINE</h3>
 </div>
 
 
@@ -18,9 +19,9 @@ Welcome to LET'S HASH ONLINE !, your one-stop solution for calculating file and 
 
 ## How It Works
 
-- Upload a File or Enter Text: Upload your file or paste your text into the provided field.
-- Select a Hashing Method: Choose from a variety of hash algorithms such as MD5,SHA-256, SHA-512, and more.
-- Generate Hash: Click the "LETS HASH IT" button to calculate the hash
+- **Step 01:** Upload a File or Enter Text: Upload your file or paste your text into the provided field.
+- **Step 02:** Select a Hashing Method: Choose from a variety of hash algorithms such as MD5,SHA-256, SHA-512, and more.
+- **Step 03:** Generate Hash: Click the "LETS HASH IT" button to calculate the hash.
 
 ## Contributing
 
