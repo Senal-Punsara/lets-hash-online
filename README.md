@@ -1,10 +1,10 @@
-# LETS HASH ONLINE
+# LET'S HASH ONLINE
 <div align="center">
-  <img src="https://github.com/Senal-Punsara/lets-hash-online/blob/main/frontend/src/resources/logo.png" alt="logo" width="300" height="300">
+  <img src="https://github.com/Senal-Punsara/lets-hash-online/blob/main/frontend/src/resources/logo.png" alt="logo" width="200" height="200">
 </div>
 
 
-Welcome to LETS HASH ONLINE !, your one-stop solution for calculating file and text hashes quickly and easily. Whether you need to verify file integrity or text integrity, this user-friendly website provides accurate and reliable hash calculations for all your needs.
+Welcome to LET'S HASH ONLINE !, your one-stop solution for calculating file and text hashes quickly and easily. Whether you need to verify file integrity or text integrity, this user-friendly website provides accurate and reliable hash calculations for all your needs.
 
 ## Website Link
 <a href="https://lesthashonline.choreoapps.dev">https://lesthashonline.choreoapps.dev</a>
@@ -34,11 +34,11 @@ We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or 
 
 ## License
 
-LETS HASH ONLINE is licensed under the MIT License. See the [LICENSE](https://github.com/Senal-Punsara/lets-hash-online/blob/main/LICENSE) file for more details.
+LET'S HASH ONLINE is licensed under the MIT License. See the [LICENSE](https://github.com/Senal-Punsara/lets-hash-online/blob/main/LICENSE) file for more details.
 
 
 ## Contact
 For any inquiries or support, please send a mail at kksenalpunsara@gmail.com.
 
 ##
-Thank you for using LETS HASH ONLINE! Happy Hashing 😊
+Thank you for using LET'S HASH ONLINE! Happy Hashing 😊🔍🧾

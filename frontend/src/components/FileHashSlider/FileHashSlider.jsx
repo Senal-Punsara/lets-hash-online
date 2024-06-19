@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -34,7 +34,11 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const steps = ["Select the File", "Select Hashing Method", "Calculate the Hash"];
+const steps = [
+  "Select the File",
+  "Select Hashing Method",
+  "Calculate the Hash",
+];
 
 const BpIcon = styled("span")(({ theme }) => ({
   borderRadius: "50%",
@@ -81,7 +85,6 @@ const BpCheckedIcon = styled(BpIcon)({
   },
 });
 
-// Inspired by blueprintjs
 function BpRadio(props) {
   return (
     <Radio
@@ -102,7 +105,11 @@ export default function FileHashSlider() {
   const [hashFunc, setHashFunc] = useState("MD5");
   const [hasingProgress, setHasingProgress] = useState(0);
   const [fileName, setFileName] = useState(null);
-  const [processState, setProcessSate] = useState(0);
+  const [processState, setProcessState] = useState(0);
+  const [cancel, setCancel]  = useState(0);
+  const abortControllerRef = useRef(null);
+
+  const reader = new FileReader();
 
   useEffect(() => {
     const unloadCallback = (event) => {
@@ -116,14 +123,14 @@ export default function FileHashSlider() {
   }, []);
 
   const handleChange = (event) => {
-    setProcessSate(0);
+    setProcessState(0);
     setHasingProgress(0);
     setHashFunc(event.target.value);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length) {
-      setProcessSate(0);
+      setProcessState(0);
       const file = acceptedFiles[0];
       setFile(file);
       setFileName(file.name);
@@ -160,6 +167,13 @@ export default function FileHashSlider() {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setProcessState(0);
+  };
+  
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -186,56 +200,80 @@ export default function FileHashSlider() {
   // calculate hash
   const calculateHash = () => {
     setHasingProgress(0);
-    setProcessSate(1);
+    setProcessState(1);
     if (file) {
-      const chunkSize = 1024 * 1024 * 2; // 20 MB chunks
-      const totalChunks = Math.ceil(file.size / chunkSize);
-      let currentChunk = 0;
-      let hash;
-      if (hashFunc === "MD5") {
-        hash = CryptoJS.algo.MD5.create();
-      } else if (hashFunc === "SHA256") {
-        hash = CryptoJS.algo.SHA256.create();
-      } else if (hashFunc === "SHA224") {
-        hash = CryptoJS.algo.SHA224.create();
-      } else if (hashFunc === "SHA512") {
-        hash = CryptoJS.algo.SHA512.create();
-      } else if (hashFunc === "SHA384") {
-        hash = CryptoJS.algo.SHA384.create();
-      } else if (hashFunc === "SHA3") {
-        hash = CryptoJS.algo.SHA3.create();
-      }
+      abortControllerRef.current = new AbortController();
+      const { signal } = abortControllerRef.current;
+      calculateFileHash(file, hashFunc, signal).then((finalHash) => {
+        setHash(finalHash);
+        setProcessState(2);
+      }).catch((error) => {
+        if (error.name === 'AbortError') {
+          console.log('Hash calculation cancelled');
+        } else {
+          console.error('Error calculating hash:', error);
+        }
+        setProcessState(0);
+      });
+    }
+  };
 
-      const reader = new FileReader();
-
+  async function calculateFileHash(file, hashFunc, signal) {
+    const chunkSize = 1024 * 1024 * 2; // 2 MB chunks
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    let currentChunk = 0;
+    let hash;
+  
+    if (hashFunc === "MD5") {
+      hash = CryptoJS.algo.MD5.create();
+    } else if (hashFunc === "SHA256") {
+      hash = CryptoJS.algo.SHA256.create();
+    } else if (hashFunc === "SHA224") {
+      hash = CryptoJS.algo.SHA224.create();
+    } else if (hashFunc === "SHA512") {
+      hash = CryptoJS.algo.SHA512.create();
+    } else if (hashFunc === "SHA384") {
+      hash = CryptoJS.algo.SHA384.create();
+    } else if (hashFunc === "SHA3") {
+      hash = CryptoJS.algo.SHA3.create();
+    }
+  
+    return new Promise((resolve, reject) => {
+      signal.addEventListener('abort', () => {
+        reader.abort();
+        reject(new DOMException('Aborted', 'AbortError'));
+      });
+  
       reader.onload = (event) => {
         const chunkData = CryptoJS.lib.WordArray.create(event.target.result);
         hash.update(chunkData);
-
         currentChunk++;
         const currentProgress = (currentChunk / totalChunks) * 100;
         setHasingProgress(currentProgress);
-
+  
         if (currentChunk < totalChunks) {
-          console.log(1);
           processNextChunk();
         } else {
-          const finalHash = hash.finalize();
-          setHash(finalHash.toString());
-          setProcessSate(2);
+          const finalHash = hash.finalize().toString();
+          resolve(finalHash);
         }
       };
-
+  
+      reader.onerror = () => {
+        reject(new Error('File reading error'));
+      };
+  
       const processNextChunk = () => {
         const start = currentChunk * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
-        const blob = file.slice(start, end);
-        reader.readAsArrayBuffer(blob);
+        const chunk = file.slice(start, end);
+        reader.readAsArrayBuffer(chunk);
       };
-
+  
       processNextChunk();
-    }
-  };
+    });
+  }
+  
   function LinearProgressWithLabel(props) {
     return (
       <Box
@@ -344,7 +382,7 @@ export default function FileHashSlider() {
                 <Box
                   sx={{
                     mt: 2,
-                    maxWidth:"95%",
+                    maxWidth: "95%",
                     display: "Flex",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -358,14 +396,17 @@ export default function FileHashSlider() {
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
-                        maxWidth:"100%",
+                        maxWidth: "100%",
                       }}
                     >
                       <Typography>Selected File:</Typography>
-                      <Typography sx={{ maxWidth: "100%",overflowX:"auto",mt: 1}}><strong>{fileName}</strong></Typography>
+                      <Typography
+                        sx={{ maxWidth: "100%", overflowX: "auto", mt: 1 }}
+                      >
+                        <strong>{fileName}</strong>
+                      </Typography>
                     </Box>
                   ) : (
-                   
                     <Typography>
                       Drag and Drop or Click to Select the File
                     </Typography>
@@ -460,7 +501,7 @@ export default function FileHashSlider() {
               >
                 {(processState == 0 || processState == 2) && (
                   <Button variant="contained" onClick={calculateHash}>
-                    Lets Hash It
+                    Let's Hash It
                   </Button>
                 )}
 
@@ -477,9 +518,17 @@ export default function FileHashSlider() {
                       height="100"
                     />
 
-                    <div style={{ width: "60%", mt: 10 }}>
+                    <div
+                      style={{
+                        width: "60%",
+                        mt: 10,
+                      }}
+                    >
                       <LinearProgressWithLabel value={hasingProgress} />
                     </div>
+                    <Button variant="outlined" color="error" sx={{ mt: 1 }} onClick={handleCancel}>
+                      cancel
+                    </Button>
                   </>
                 )}
                 {processState == 2 && (
@@ -492,7 +541,7 @@ export default function FileHashSlider() {
                       width: "100%",
                     }}
                   >
-                    <Typography sx={{ mt: 3, mb: 1,  }}>
+                    <Typography sx={{ mt: 3, mb: 1 }}>
                       {hashFunc} Hash of the File:
                     </Typography>
                     <Typography
@@ -514,7 +563,7 @@ export default function FileHashSlider() {
         <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
           <Button
             color="inherit"
-            disabled={activeStep === 0}
+            disabled={activeStep === 0 || processState == 1}
             onClick={handleBack}
             sx={{ mr: 1 }}
           >

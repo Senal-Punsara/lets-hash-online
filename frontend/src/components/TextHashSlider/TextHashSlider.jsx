@@ -80,7 +80,6 @@ const BpCheckedIcon = styled(BpIcon)({
   },
 });
 
-// Inspired by blueprintjs
 function BpRadio(props) {
   return (
     <Radio
@@ -332,7 +331,6 @@ export default function TextHashSlider() {
                   control={<BpRadio />}
                   label="SHA-256"
                 />
-
                 <FormControlLabel
                   value="SHA384"
                   control={<BpRadio />}
@@ -359,7 +357,7 @@ export default function TextHashSlider() {
             >
               {(processState == 0 || processState == 2) && (
                 <Button variant="contained" onClick={calculateHash}>
-                  Lets Hash It
+                  Let's Hash It
                 </Button>
               )}
               {processState === 1 && (
@@ -367,7 +365,6 @@ export default function TextHashSlider() {
                   <div>
                     <Typography variant="h4">Calculating ...</Typography>
                   </div>
-
                   <img
                     src={ProcessingImage}
                     alt="Processing"
