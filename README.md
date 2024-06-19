@@ -7,7 +7,7 @@
 Welcome to LET'S HASH ONLINE !, your one-stop solution for calculating file and text hashes quickly and easily. Whether you need to verify file integrity or text integrity, this user-friendly website provides accurate and reliable hash calculations for all your needs.
 
 ## Website Link
-<a href="https://lesthashonline.choreoapps.dev">https://lesthashonline.choreoapps.dev</a>
+<a href="https://letshashonline.choreoapps.dev">https://letshashonline.choreoapps.dev</a>
 
 ## Key Features
 - File Hashing: Upload any file to generate its hash instantly. Supported algorithms include MD5, SHA-1, SHA-256, and more.
@@ -20,7 +20,7 @@ Welcome to LET'S HASH ONLINE !, your one-stop solution for calculating file and 
 
 - Upload a File or Enter Text: Upload your file or paste your text into the provided field.
 - Select a Hashing Method: Choose from a variety of hash algorithms such as MD5,SHA-256, SHA-512, and more.
-- Generate Hash: Click the "LETS HASH IT" button to calculate the hash
+- Generate Hash: Click the "LET'S HASH IT" button to calculate the hash
 
 ## Contributing
 
