@@ -95,8 +95,8 @@ export default function MainPage() {
 
         <Box  sx={{ width: "100%", height: "100%", bgcolor: "white", borderRadius: "5px", mt:4 , p:2 }}>
           <Typography ><strong>LETS HASH ONLINE</strong>, your one-stop solution for calculating file and text hashes 
-            quickly and easily. Whether you need to verify file integrity, or ensure data consistency,
-             our user-friendly tool provides accurate and reliable hash 
+            quickly and easily. Whether you need to verify file integrity or text integrity,
+             this user-friendly website provides accurate and reliable hash 
              calculations for all your needs.</Typography>
         </Box>
 

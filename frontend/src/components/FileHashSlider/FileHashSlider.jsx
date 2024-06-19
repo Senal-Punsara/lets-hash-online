@@ -493,10 +493,9 @@ export default function FileHashSlider() {
                     }}
                   >
                     <Typography sx={{ mt: 3, mb: 1,  }}>
-                      {hashFunc} Hash of the Text:
+                      {hashFunc} Hash of the File:
                     </Typography>
                     <Typography
-                      
                       sx={{
                         fontWeight: "bold",
                         maxWidth: "90%",
