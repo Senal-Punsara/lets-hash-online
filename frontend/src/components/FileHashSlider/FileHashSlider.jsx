@@ -344,6 +344,7 @@ export default function FileHashSlider() {
                 <Box
                   sx={{
                     mt: 2,
+                    maxWidth:"95%",
                     display: "Flex",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -357,15 +358,16 @@ export default function FileHashSlider() {
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
+                        maxWidth:"100%",
                       }}
                     >
                       <Typography>Selected File:</Typography>
-                      <Typography>{fileName}</Typography>
+                      <Typography sx={{ maxWidth: "100%",overflowX:"auto",mt: 1}}><strong>{fileName}</strong></Typography>
                     </Box>
                   ) : (
-                    // `Selected File: ${fileName}`
+                   
                     <Typography>
-                      Drag and drop or Click to Select the File
+                      Drag and Drop or Click to Select the File
                     </Typography>
                   )}
                 </Box>
@@ -471,7 +473,7 @@ export default function FileHashSlider() {
                     <img
                       src={ProcessingImage}
                       alt="Processing"
-                      width="260"
+                      width="300"
                       height="100"
                     />
 
@@ -490,11 +492,11 @@ export default function FileHashSlider() {
                       width: "100%",
                     }}
                   >
-                    <Typography sx={{ mt: 3, mb: 1, fontSize: "20px" }}>
+                    <Typography sx={{ mt: 3, mb: 1,  }}>
                       {hashFunc} Hash of the Text:
                     </Typography>
                     <Typography
-                      variant="h6"
+                      
                       sx={{
                         fontWeight: "bold",
                         maxWidth: "90%",
