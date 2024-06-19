@@ -22,6 +22,7 @@ Welcome to LET'S HASH ONLINE !, your one-stop solution for calculating file and 
 - **Step 02:** Select a Hashing Method: Choose from a variety of hash algorithms such as MD5,SHA-256, SHA-512, and more.
 - **Step 03:** Generate Hash: Click the "LETS HASH IT" button to calculate the hash.
 
+
 ## Contributing
 
 We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or feature requests, please open an [issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue) on GitHub. You can also fork the repository and submit a pull request.
