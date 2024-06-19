@@ -66,7 +66,7 @@ export default function MainPage() {
         >
           <img src={Logo} alt="Processing" width="60" height="60" />
           <Typography variant="h4" sx={{ fontWeight: "bold", ml:2 }}>
-            LETS&nbsp; HASH &nbsp;ONLINE
+            LET'S&nbsp; HASH &nbsp;ONLINE
           </Typography>
         </Box>
 
@@ -80,8 +80,8 @@ export default function MainPage() {
                 onChange={handleChange}
                 aria-label="basic tabs example"
               >
-                <Tab label="Lets Hash File" {...a11yProps(0)} />
-                <Tab label="Lets Hash Text" {...a11yProps(1)} />
+                <Tab label="Let's Hash File" {...a11yProps(0)} />
+                <Tab label="Let's Hash Text" {...a11yProps(1)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
@@ -94,7 +94,7 @@ export default function MainPage() {
         </Box>
 
         <Box  sx={{ width: "100%", height: "100%", bgcolor: "white", borderRadius: "5px", mt:4 , p:2 }}>
-          <Typography ><strong>LETS HASH ONLINE</strong>, your one-stop solution for calculating file and text hashes 
+          <Typography ><strong>LET'S HASH ONLINE</strong>, your one-stop solution for calculating file and text hashes 
             quickly and easily. Whether you need to verify file integrity or text integrity,
              this user-friendly website provides accurate and reliable hash 
              calculations for all your needs.</Typography>

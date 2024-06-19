@@ -359,7 +359,7 @@ export default function TextHashSlider() {
             >
               {(processState == 0 || processState == 2) && (
                 <Button variant="contained" onClick={calculateHash}>
-                  Lets Hash It
+                  Let's Hash It
                 </Button>
               )}
               {processState === 1 && (
