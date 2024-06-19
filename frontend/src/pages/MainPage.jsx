@@ -5,10 +5,12 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { CssBaseline } from "@mui/material";
+
 import FileHashSlider from "../components/FileHashSlider/FileHashSlider";
 import TextHashSlider from "../components/TextHashSlider/TextHashSlider";
 import Logo from "../resources/logo.png";
-import { CssBaseline } from "@mui/material";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,8 +71,6 @@ export default function MainPage() {
             LET'S&nbsp; HASH &nbsp;ONLINE
           </Typography>
         </Box>
-
-       
 
         <Box sx={{ width: "100%", bgcolor: "white", borderRadius: "5px" }}>
           <Box sx={{ p: 1 }}>

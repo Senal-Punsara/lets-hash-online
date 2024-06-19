@@ -85,7 +85,6 @@ const BpCheckedIcon = styled(BpIcon)({
   },
 });
 
-// Inspired by blueprintjs
 function BpRadio(props) {
   return (
     <Radio
@@ -110,9 +109,7 @@ export default function FileHashSlider() {
   const [cancel, setCancel]  = useState(0);
   const abortControllerRef = useRef(null);
 
-
   const reader = new FileReader();
-
 
   useEffect(() => {
     const unloadCallback = (event) => {
@@ -177,7 +174,6 @@ export default function FileHashSlider() {
     setProcessState(0);
   };
   
-
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -277,7 +273,6 @@ export default function FileHashSlider() {
       processNextChunk();
     });
   }
-  
   
   function LinearProgressWithLabel(props) {
     return (
